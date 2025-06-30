@@ -30,7 +30,7 @@ import URBasic
 import numpy as np
 import time
 import xml.etree.ElementTree as ET
-from pkg_resources import resource_filename
+import importlib.resources
 
 class DataLog(threading.Thread):
     '''
@@ -50,7 +50,7 @@ class DataLog(threading.Thread):
         self.__stop_event = True
 
 
-        configFilename = resource_filename(__name__, 'logConfig.xml')
+        configFilename = importlib.resources.files(__name__).joinpath('logConfig.xml')
         self.__config = Config
         self.__readConfig(configFileName=configFilename, config=self.__config)
 
@@ -60,7 +60,7 @@ class DataLog(threading.Thread):
 
 
     def __readConfig(self, configFileName, config):
-        tree = ET.parse(configFileName)
+        tree = ET.parse(str(configFileName))
         logConfig = tree.getroot()
         dataLogConfig = logConfig.find('dataLogConfig')
         decimals = dataLogConfig.find('defaultDecimals')

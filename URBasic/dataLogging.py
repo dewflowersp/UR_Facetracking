@@ -26,7 +26,7 @@ __author__ = "Martin Huus Bjerge"
 __copyright__ = "Copyright 2017, Rope Robotics ApS, Denmark"
 __license__ = "MIT License"
 
-from pkg_resources import resource_filename
+import importlib.resources
 import logging
 import time
 import os
@@ -61,7 +61,7 @@ class DataLogging(with_metaclass(Singleton, object)):
         self.__dataLogFileMode = 'w'
 
         if config is None:
-            configFilename = resource_filename(__name__, 'logConfig.xml')
+            configFilename = importlib.resources.files(__name__).joinpath('logConfig.xml')
         else:
             configFilename = config
         self.__readConfig(configFileName=configFilename)
@@ -80,7 +80,7 @@ class DataLogging(with_metaclass(Singleton, object)):
 
 
     def __readConfig(self, configFileName):
-        tree = ET.parse(configFileName)
+        tree = ET.parse(str(configFileName))
         logConfig = tree.getroot()
         developerModeTag = logConfig.find('developerMode')
         self.__developerTestingFlag = ast.literal_eval(developerModeTag.text)
@@ -108,7 +108,7 @@ class DataLogging(with_metaclass(Singleton, object)):
     def GetLogPath(self,path=None, developerTestingFlag=True):
         '''
         Setup a path where log files will be stored
-        Path format .\[path]\YY-mm-dd\HH-MM-SS\
+        Path format ./[path]/YY-mm-dd/HH-MM-SS/
         '''
         if path is None:
             path = URBasic.__file__[0:URBasic.__file__.find('URBasic')] + 'log'

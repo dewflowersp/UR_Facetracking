@@ -25,7 +25,7 @@ __author__ = "Martin Huus Bjerge"
 __copyright__ = "Copyright 2017, Rope Robotics ApS, Denmark"
 __license__ = "MIT License"
 
-from pkg_resources import resource_filename
+import importlib.resources
 import URBasic
 import threading
 import socket
@@ -89,7 +89,7 @@ class RTDE(threading.Thread): #, metaclass=Singleton
         self.__reconnectTimeout = 600 #Seconds (while in run)
         self.__dataSend = RTDEDataObject()
         # always use the rtdeCOnfiguration in the packages folder
-        conf_filename = resource_filename(__name__, 'rtdeConfigurationDefault.xml')
+        conf_filename = importlib.resources.files(__name__).joinpath('rtdeConfigurationDefault.xml')
         self.__conf_filename = conf_filename
         self.__stop_event = True
         threading.Thread.__init__(self)
@@ -212,7 +212,7 @@ class RTDE(threading.Thread): #, metaclass=Singleton
         '''
 
         if input_variables is None:
-            tree = ET.parse(self.__conf_filename)
+            tree = ET.parse(str(self.__conf_filename))
             root = tree.getroot()
 
             #setup data that can be send
@@ -261,10 +261,10 @@ class RTDE(threading.Thread): #, metaclass=Singleton
         '''
 
         if output_variables is None:
-            if not os.path.isfile(self.__conf_filename):
-                self._logger.error("Configuration file don't exist : " + self.__conf_filename)
+            if not os.path.isfile(str(self.__conf_filename)):
+                self._logger.error("Configuration file don't exist : " + str(self.__conf_filename))
                 return False
-            tree = ET.parse(self.__conf_filename)
+            tree = ET.parse(str(self.__conf_filename))
             root = tree.getroot()
 
             #Setup data to be recived
