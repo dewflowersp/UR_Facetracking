@@ -24,19 +24,21 @@ import math3d as m3d
 RASPBERRY_BOOL = False
 # If this is run on a linux system, a picamera will be used.
 # If you are using a linux system, with a webcam instead of a raspberry pi delete the following if-statement
+
 if sys.platform == "linux":
     import picamera
     from picamera.array import PiRGBArray
     RASPBERRY_BOOL = True
+    
 
-ROBOT_IP = '192.168.178.120'
-ACCELERATION = 0.9  # Robot acceleration value
-VELOCITY = 0.8  # Robot speed value
+ROBOT_IP = '192.168.1.11'
+ACCELERATION = 0.2  # Robot acceleration value
+VELOCITY = 0.2  # Robot speed value
 
 # The Joint position the robot starts at
-robot_startposition = (math.radians(-218),
+robot_startposition = (math.radians(-10),
                     math.radians(-63),
-                    math.radians(-93),
+                    math.radians(-100),
                     math.radians(-20),
                     math.radians(88),
                     math.radians(0))
@@ -320,7 +322,7 @@ def move_to_face(list_of_facepos,robot_pos):
     position_vec_coords = m3d.Transform(tcp_orient, xyz_coords)
 
     oriented_xyz = origin * position_vec_coords
-    oriented_xyz_coord = oriented_xyz.get_pose_vector()
+    oriented_xyz_coord = oriented_xyz.pose_vector.get_array()
 
     coordinates = oriented_xyz_coord
 
@@ -360,6 +362,8 @@ try:
         if len(face_positions) > 0:
             robot_position = move_to_face(face_positions,robot_position)
 
+        time.sleep(0.05)
+
     print("exiting loop")
 except KeyboardInterrupt:
     print("closing robot connection")
@@ -367,4 +371,6 @@ except KeyboardInterrupt:
     robot.close()
 
 except:
+    print("Unexpected error:", sys.exc_info()[0])
+    print("Error details:", sys.exc_info()[1]) 
     robot.close()

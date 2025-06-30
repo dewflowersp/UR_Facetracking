@@ -130,7 +130,7 @@ class RTDE(threading.Thread): #, metaclass=Singleton
             self.__conn_state = ConnectionState.CONNECTED
         except (socket.timeout, socket.error):
             if self.__sock:
-                self.sock.close()
+                self.__sock.close()
             self.__sock = None
             return False
         return True
@@ -399,14 +399,23 @@ class RTDE(threading.Thread): #, metaclass=Singleton
     def __receive(self):
         byte_buffer = bytes()
 
-        (readable, _, _) = select.select([self.__sock], [], [], DEFAULT_TIMEOUT)
-        if (len(readable)):
-            more = self.__sock.recv(4096)  # TODO: MAKE THIS 4096 instead of 16384
-            if len(more) == 0:
-                self._logger.info("RTDE disconnected")
-                self.__disconnect()
-                return None
-            byte_buffer +=  more
+        if self.__sock is None:
+            self._logger.error("Socket is None in __receive")
+            return None
+
+        try:
+            (readable, _, _) = select.select([self.__sock], [], [], DEFAULT_TIMEOUT)
+            if (len(readable)):
+                more = self.__sock.recv(4096)
+                if len(more) == 0:
+                    self._logger.info("RTDE disconnected")
+                    self.__disconnect()
+                    return None
+                byte_buffer += more
+        except Exception as e:
+            self._logger.error(f"Error in __receive: {e}")
+            self.__disconnect()
+            return None
 
         while len(byte_buffer) >= 3:
             (packet_size, packet_command) = struct.unpack_from('>HB', byte_buffer)
