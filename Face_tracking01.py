@@ -32,15 +32,15 @@ if sys.platform == "linux":
     
 
 ROBOT_IP = '192.168.1.11'
-ACCELERATION = 0.2  # Robot acceleration value
-VELOCITY = 0.2  # Robot speed value
+ACCELERATION = 1  # Robot acceleration value
+VELOCITY = 1  # Robot speed value
 
 # The Joint position the robot starts at
-robot_startposition = (math.radians(-10),
-                    math.radians(-63),
-                    math.radians(-100),
-                    math.radians(-20),
-                    math.radians(88),
+robot_startposition = (math.radians(-20),
+                    math.radians(-83),
+                    math.radians(-110),
+                    math.radians(0),
+                    math.radians(80),
                     math.radians(0))
 
 # Path to the face-detection model:
@@ -53,7 +53,7 @@ video_asp_ratio  = video_resolution[0] / video_resolution[1]  # Aspect ration of
 video_viewangle_hor = math.radians(25)  # Camera FOV (field of fiew) angle in radians in horizontal direction
 
 # Variable which scales the robot movement from pixels to meters.
-m_per_pixel = 00.00009  
+m_per_pixel = 0.00009  
 
 # Size of the robot view-window
 # The robot will at most move this distance in each direction
@@ -65,7 +65,7 @@ hor_rot_max = math.radians(50)
 vert_rot_max = math.radians(25)
 
 
-vs = VideoStream(src= 0 ,
+vs = VideoStream(src= 0,
                  usePiCamera= RASPBERRY_BOOL,
                  resolution=video_resolution,
                  framerate = 13,
@@ -369,8 +369,10 @@ except KeyboardInterrupt:
     print("closing robot connection")
     # Remember to always close the robot connection, otherwise it is not possible to reconnect
     robot.close()
+    exit(1)
 
 except:
     print("Unexpected error:", sys.exc_info()[0])
     print("Error details:", sys.exc_info()[1]) 
     robot.close()
+    exit(1)
