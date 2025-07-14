@@ -71,7 +71,10 @@ class UrScriptExt(URBasic.urScript.UrScript):
     def close(self):
         self.print_actual_tcp_pose()
         self.print_actual_joint_positions()
+        print('Start closing robot connections...')
         self.robotConnector.close()
+        time.sleep(0.5)
+        print('All Connection Closed...')
 
     def reset_error(self):
         '''

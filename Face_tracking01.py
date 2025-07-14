@@ -25,30 +25,38 @@ RASPBERRY_BOOL = False
 # If this is run on a linux system, a picamera will be used.
 # If you are using a linux system, with a webcam instead of a raspberry pi delete the following if-statement
 
-if sys.platform == "linux":
-    import picamera
-    from picamera.array import PiRGBArray
-    RASPBERRY_BOOL = True
+# if sys.platform == "linux":
+#     import picamera
+#     from picamera.array import PiRGBArray
+#     RASPBERRY_BOOL = True
     
 
 ROBOT_IP = '192.168.1.11'
-ACCELERATION = 1  # Robot acceleration value
-VELOCITY = 1  # Robot speed value
+ACCELERATION = 2  # Robot acceleration value
+VELOCITY = 2  # Robot speed value
 
 # The Joint position the robot starts at
-robot_startposition = (math.radians(-20),
+robot_startposition_1 = (math.radians(-20),
                     math.radians(-83),
                     math.radians(-110),
                     math.radians(0),
                     math.radians(80),
-                    math.radians(0))
+                    math.radians(-20))
+
+# The Joint position the robot starts at
+robot_startposition_2 = (math.radians(-50.98), # old 20
+                    math.radians(-100.92), # old -83
+                    math.radians(-82.01), # old -110
+                    math.radians(0.73), # old 0
+                    math.radians(84.34), # old 80
+                    math.radians(-25.35)) # old -20
 
 # Path to the face-detection model:
 pretrained_model = cv2.dnn.readNetFromCaffe("MODELS/deploy.prototxt.txt", "MODELS/res10_300x300_ssd_iter_140000.caffemodel")
 
 video_resolution = (700, 400)  # resolution the video capture will be resized to, smaller sizes can speed up detection
 video_midpoint = (int(video_resolution[0]/2),
-                  int(video_resolution[1]/2))
+                  int(video_resolution[1]/2) + 50)
 video_asp_ratio  = video_resolution[0] / video_resolution[1]  # Aspect ration of each frame
 video_viewangle_hor = math.radians(25)  # Camera FOV (field of fiew) angle in radians in horizontal direction
 
@@ -65,7 +73,7 @@ hor_rot_max = math.radians(50)
 vert_rot_max = math.radians(25)
 
 
-vs = VideoStream(src= 0,
+vs = VideoStream(src= 5,
                  usePiCamera= RASPBERRY_BOOL,
                  resolution=video_resolution,
                  framerate = 13,
@@ -344,7 +352,7 @@ print("robot initialised")
 time.sleep(1)
 
 # Move Robot to the midpoint of the lookplane
-robot.movej(q=robot_startposition, a= ACCELERATION, v= VELOCITY )
+robot.movej(q=robot_startposition_1, a= ACCELERATION, v= VELOCITY )
 
 robot_position = [0,0]
 origin = set_lookorigin()
@@ -366,13 +374,13 @@ try:
 
     print("exiting loop")
 except KeyboardInterrupt:
-    print("closing robot connection")
+    print("Closing robot connection")
     # Remember to always close the robot connection, otherwise it is not possible to reconnect
     robot.close()
-    exit(1)
+    sys.exit('Closing application...')
 
 except:
     print("Unexpected error:", sys.exc_info()[0])
     print("Error details:", sys.exc_info()[1]) 
     robot.close()
-    exit(1)
+    sys.exit('Closing application...')

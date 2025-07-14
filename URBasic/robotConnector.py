@@ -27,6 +27,7 @@ __license__ = "MIT License"
 
 import URBasic
 #import URplus #import if any UPplus modules is needed
+import time
 
 class RobotConnector(object):
     '''
@@ -61,9 +62,19 @@ class RobotConnector(object):
 
 
     def close(self):
+        time.sleep(0.5)
+        print('Closing DataLog...')
         self.DataLog.close()
+        time.sleep(0.5)
+        print('Closing RTDE...')
         self.RTDE.close()
+        time.sleep(0.5)
+        print('Closing RealTimeClient...')
         self.RealTimeClient.Disconnect()
+        time.sleep(0.5)
+        print('Closing DashboardClient...')
         self.DashboardClient.close()
         if self.ForceTourqe is not None:
+            time.sleep(0.5)
+            print('Closing ForceTourqe...')
             self.ForceTourqe.close()
