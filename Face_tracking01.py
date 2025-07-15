@@ -352,7 +352,7 @@ print("robot initialised")
 time.sleep(1)
 
 # Move Robot to the midpoint of the lookplane
-robot.movej(q=robot_startposition_1, a= ACCELERATION, v= VELOCITY )
+robot.movej(q=robot_startposition_2, a= ACCELERATION, v= VELOCITY )
 
 robot_position = [0,0]
 origin = set_lookorigin()
